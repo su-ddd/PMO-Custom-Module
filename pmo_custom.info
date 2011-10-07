@@ -1,0 +1,3 @@
+name = PMO Custom Module
+description = Custom module
+core = "6.x"

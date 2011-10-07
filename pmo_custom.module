@@ -1,0 +1,36 @@
+<?php
+
+function pmo_custom_menu_link_alter(&$item, $menu) {
+  // The following marks menu items as alterable when they are saved
+  // This means that an old menu item might not be alterable unless it's saved again
+  // After menu changes, make sure to clear the cache for them
+  $item['options']['alter'] = TRUE;
+}
+
+/**
+ *  This function alters a menu item right before it's rendered.
+ *  Took this idea from the menu per role module.
+ */
+function pmo_custom_translated_menu_link_alter(&$item, $map) {
+
+  /** If the item is titled "User Login", hide it if the person is logged in.
+   *  If we were using the usual user/login URL we wouldn't have to do this, but
+   *  we are using WebAuth's own link and so can't make use of Drupal's built-in
+   *  behavior. We show this menu if someone is trying to edit it, or if someone
+   *  is trying to edit the one page that's below it.
+   */
+  if ( ($item['title'] == 'User Login') && (!preg_match('/admin\/build\/menu-customize\/*/', $_GET['q'])) ) {
+    global $user;
+    if ($user->uid) {
+      $item['access'] = FALSE;
+    }
+    else {
+      // do nothing
+    }
+  }
+
+  if ( ($item['title'] == 'User Login') && (preg_match('/157/', $_GET['q']))) {
+    global $base_url;
+    $item['href'] = $base_url;
+  }
+}
